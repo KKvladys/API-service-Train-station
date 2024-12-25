@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from train_station.models import (
@@ -21,7 +22,12 @@ class StationSerializer(serializers.ModelSerializer):
 class RouteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Route
-        fields = ("id", "source", "destination", "distance")
+        fields = (
+            "id",
+            "source",
+            "destination",
+            "distance"
+        )
 
 
 class RouteListSerializer(RouteSerializer):
@@ -40,10 +46,16 @@ class TrainTypeSerializer(serializers.ModelSerializer):
 
 
 class TrainSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Train
-        fields = ("id", "name", "cargo_num", "places_in_cargo", "train_type")
+        fields = (
+            "id",
+            "name",
+            "cargo_num",
+            "places_in_cargo",
+            "train_type",
+            "capacity"
+        )
 
 
 class TrainListSerializer(TrainSerializer):
@@ -55,7 +67,12 @@ class TrainListSerializer(TrainSerializer):
 class CrewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Crew
-        fields = ("id", "first_name", "last_name", "full_name")
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "full_name"
+        )
 
 
 class TicketSerializer(serializers.ModelSerializer):
@@ -66,37 +83,85 @@ class TicketSerializer(serializers.ModelSerializer):
 
 class TicketDetailSerializer(TicketSerializer):
     trip = serializers.SerializerMethodField()
-    departure_time = serializers.CharField(source="trip.departure_time", read_only=True)
-    arrival_time = serializers.CharField(source="trip.arrival_time", read_only=True)
+    departure_time = serializers.CharField(
+        source="trip.departure_time", read_only=True
+    )
+    arrival_time = serializers.CharField(
+        source="trip.arrival_time", read_only=True
+    )
+    train = serializers.CharField(
+        source="trip.train.name", read_only=True
+    )
 
     class Meta:
         model = Ticket
-        fields = ("id", "cargo", "seat", "trip", "departure_time", "arrival_time")
+        fields = (
+            "id",
+            "cargo",
+            "seat",
+            "trip",
+            "departure_time",
+            "arrival_time",
+            "train")
 
     def get_trip(self, obj):
         return str(obj.trip.route)
 
+
 class OrderSerializer(serializers.ModelSerializer):
-    tickets = TicketSerializer(many=True, read_only=False, allow_empty=False)
+    tickets = TicketSerializer(
+        many=True, read_only=False, allow_empty=False
+    )
 
     class Meta:
         model = Order
         fields = ("id", "created_at", "tickets")
 
+    def create(self, validated_data):
+        with transaction.atomic():
+            tickets_data = validated_data.pop("tickets")
+            order = Order.objects.create(**validated_data)
+            for ticket_data in tickets_data:
+                Ticket.objects.create(order=order, **ticket_data)
+            return order
 
-class OrderDetailSerializer(OrderSerializer):
-    tickets = TicketDetailSerializer(many=True, read_only=True)
+
+class OrderListSerializer(OrderSerializer):
+    tickets = TicketDetailSerializer(
+        many=True, read_only=True
+    )
 
 
 class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
-        fields = ("id", "route", "train", "departure_time", "arrival_time")
+        fields = (
+            "id",
+            "route",
+            "train",
+            "departure_time",
+            "arrival_time",
+            "crew",
+        )
 
 
-class TripDetailSerializer(TripSerializer):
-    route = serializers.SerializerMethodField()
+class TripListSerializer(TripSerializer):
+    route = RouteListSerializer(read_only=True)
     train = serializers.CharField(source="train.name", read_only=True)
+    crew = serializers.SlugRelatedField(many=True, read_only=True, slug_field="full_name")
+    tickets_available = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Trip
+        fields = (
+            "id",
+            "route",
+            "train",
+            "tickets_available",
+            "departure_time",
+            "arrival_time",
+            "crew",
+        )
 
     def get_route(self, obj):
         return str(obj.route)

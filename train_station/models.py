@@ -35,8 +35,8 @@ class TrainType(models.Model):
 
 class Train(models.Model):
     name = models.CharField(max_length=255)
-    cargo_num = models.IntegerField(MinValueValidator(1))
-    places_in_cargo = models.IntegerField(MinValueValidator(1))
+    cargo_num = models.IntegerField(validators=[MinValueValidator(1)])
+    places_in_cargo = models.IntegerField(validators=[MinValueValidator(1)])
     train_type = models.ForeignKey(
         TrainType, related_name="trains", on_delete=models.CASCADE
     )
@@ -138,5 +138,8 @@ class Crew(models.Model):
     first_name = models.CharField(max_length=63)
     last_name = models.CharField(max_length=63)
 
+    @property
+    def full_name(self) -> str:
+        return f"{self.first_name} {self.last_name}"
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name}"

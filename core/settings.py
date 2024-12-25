@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
 
     "accounts",
     "train_station"
@@ -72,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "api_train_station.wsgi.application"
+WSGI_APPLICATION = "core.wsgi.application"
 
 
 # Database

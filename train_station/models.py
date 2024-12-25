@@ -41,6 +41,10 @@ class Train(models.Model):
         TrainType, related_name="trains", on_delete=models.CASCADE
     )
 
+    @property
+    def capacity(self):
+        return  self.cargo_num * self.places_in_cargo
+
     def __str__(self) -> str:
         return self.name
 
@@ -67,15 +71,23 @@ class Trip(models.Model):
     )
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
+    crew = models.ManyToManyField(
+        "Crew", related_name="trips"
+    )
 
     def clean(self):
         if self.arrival_time <= self.departure_time:
-            raise ValidationError("Arrival time must be after departure time.")
+            raise ValidationError(
+                "Arrival time must be after departure time."
+            )
 
     def __str__(self) -> str:
-        return f"({str(self.departure_time)}) {str(self.route)} ({str(self.arrival_time)})"
+        return (f"({str(self.departure_time)}) "
+                f"{str(self.route)} "
+                f"({str(self.arrival_time)})")
 
     class Meta:
+        ordering = ("departure_time",)
         unique_together = ("route", "train", "departure_time")
 
 
@@ -115,11 +127,11 @@ class Ticket(models.Model):
         )
 
     def save(
-        self,
-        force_insert=False,
-        force_update=False,
-        using=None,
-        update_fields=None,
+            self,
+            force_insert=False,
+            force_update=False,
+            using=None,
+            update_fields=None,
     ):
         self.full_clean()
         super(Ticket, self).save(
@@ -127,7 +139,9 @@ class Ticket(models.Model):
         )
 
     def __str__(self):
-        return f"{str(self.trip)} (cargo: {self.cargo}, seat: {self.seat})"
+        return (f"{str(self.trip)}"
+                f" (cargo: {self.cargo}, "
+                f"seat: {self.seat})")
 
     class Meta:
         unique_together = ("trip", "cargo", "seat")
@@ -141,5 +155,6 @@ class Crew(models.Model):
     @property
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
+
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name}"

@@ -22,4 +22,5 @@ urlpatterns = [
     path("train-station/", include("train_station.urls")),
     path("user/", include("accounts.urls")),
     path("admin/", admin.site.urls),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]

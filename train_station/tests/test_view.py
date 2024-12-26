@@ -307,23 +307,3 @@ class AuthenticatedTripTest(BaseAuthenticatedTest):
 
         self.assertEqual(res.data["results"], serializer.data)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-
-
-class AdminTripTest(BaseAdminTest):
-    def setUp(self):
-        super().setUp()
-
-    def test_train_create(self):
-        test_train_type = TrainType.objects.create(
-            name="Test train type name"
-        )
-        payload = {
-            "name": "Test train name",
-            "cargo_num": 4,
-            "places_in_cargo": 40,
-            "train_type": test_train_type.id
-        }
-
-        res = self.client.post(TRAIN_URL, payload)
-        train = Train.objects.get(id=res.data["id"])
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)

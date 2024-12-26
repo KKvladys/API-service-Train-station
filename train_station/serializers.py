@@ -37,6 +37,13 @@ class RouteListSerializer(RouteSerializer):
     destination = serializers.SlugRelatedField(
         many=False, read_only=True, slug_field="name"
     )
+    # source = serializers.CharField(
+    #     source="source.name", read_only=True
+    # )
+    # destination = serializers.CharField(
+    #     source="destination.name", read_only=True
+    # )
+
 
 
 class TrainTypeSerializer(serializers.ModelSerializer):
@@ -149,7 +156,7 @@ class TripListSerializer(TripSerializer):
     route = RouteListSerializer(read_only=True)
     train = serializers.CharField(source="train.name", read_only=True)
     crew = serializers.SlugRelatedField(many=True, read_only=True, slug_field="full_name")
-    tickets_available = serializers.IntegerField(read_only=True)
+    tickets_available = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Trip
@@ -163,5 +170,7 @@ class TripListSerializer(TripSerializer):
             "crew",
         )
 
-    def get_route(self, obj):
-        return str(obj.route)
+    def get_tickets_available(self, obj):
+        tickets_taken = obj.tickets.count()
+        capacity = obj.train.capacity
+        return capacity - tickets_taken

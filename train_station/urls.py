@@ -2,18 +2,17 @@ from django.urls import path, include
 from rest_framework import routers
 
 from train_station.views import CrewViewSet, StationViewSet, RouteViewSet, TrainViewSet, OrderViewSet, TripViewSet, \
-    TicketViewSet, TrainTypeViewSet
+     TrainTypeViewSet
 
 router = routers.DefaultRouter()
 
-router.register("crews", CrewViewSet)
-router.register("stations", StationViewSet)
-router.register("routes", RouteViewSet)
-router.register("trains", TrainViewSet)
-router.register("orders", OrderViewSet)
-router.register("trips", TripViewSet)
-router.register("tickets", TicketViewSet)
-router.register("train-types", TrainTypeViewSet)
+router.register("crews", CrewViewSet, basename="crew")
+router.register("stations", StationViewSet, basename="station")
+router.register("routes", RouteViewSet, basename="route")
+router.register("trains", TrainViewSet, basename="train")
+router.register("orders", OrderViewSet, basename="order")
+router.register("trips", TripViewSet, basename="trip")
+router.register("train-types", TrainTypeViewSet, basename="train-type")
 
 urlpatterns = [
     path("", include(router.urls))

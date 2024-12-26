@@ -16,7 +16,6 @@ from train_station.models import (
     Train,
     Order,
     Trip,
-    Ticket,
     Crew
 )
 from train_station.permisions import IsAdminOrIfAuthenticatedReadOnly
@@ -26,7 +25,6 @@ from train_station.serializers import (
     RouteSerializer,
     TrainSerializer,
     OrderSerializer,
-    TicketSerializer,
     TripSerializer,
     TrainTypeSerializer,
     RouteListSerializer,
@@ -61,29 +59,29 @@ class StationViewSet(
     filterset_class = StationFilter
     queryset = Station.objects.all()
     serializer_class = StationSerializer
-    permission_classes = (IsAdminUser,)
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class RouteViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = RouteFilter
-    queryset = Route.objects.all()
+    queryset = Route.objects.all().select_related("source", "destination")
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
         serializer_class = RouteSerializer
-        if self.action == "list":
+        if self.action in ("list", "retrieve"):
             return RouteListSerializer
         return serializer_class
 
 
 class TrainViewSet(viewsets.ModelViewSet):
-    queryset = Train.objects.all()
+    queryset = Train.objects.all().select_related("train_type")
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
         serializer_class = TrainSerializer
-        if self.action == "list":
+        if self.action in ("list", "retrieve"):
             return TrainListSerializer
         return serializer_class
 
@@ -107,22 +105,21 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 
 class TripViewSet(viewsets.ModelViewSet):
+    queryset = (
+        Trip.objects.all()
+        .select_related("route__source", "route__destination", "train")
+        .prefetch_related("crew")
+    )
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = TripFilter
     pagination_class = TripOrderViewPagination
-    queryset = Trip.objects.all()
-    permission_classes = IsAdminOrIfAuthenticatedReadOnly
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
         serializer_class = TripSerializer
         if self.action == "list":
             return TripListSerializer
         return serializer_class
-
-
-# class TicketViewSet(viewsets.ModelViewSet):
-#     queryset = Ticket.objects.all()
-#     serializer_class = TicketSerializer
 
 
 class TrainTypeViewSet(

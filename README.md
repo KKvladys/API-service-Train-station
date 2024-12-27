@@ -47,13 +47,56 @@ docker-compose up --build
 The API will be available at http://127.0.0.1:8000/
 
 API Endpoints:
-* Stations: /stations/
-* Routes: /routes/
-* Trains: /trains/
-* Trips: /trips/
-* Orders: /orders/
-* Train Types: /train-types/
-* Crews: /crews/
+train-station
+---
+### Crews
+* GET /train-station/crews/
+* POST /train-station/crews/
+---
+### Orders
+
+* GET /train-station/orders/
+* POST /train-station/orders/
+* GET /train-station/orders/{id}/
+* PUT /train-station/orders/{id}/
+* PATCH /train-station/orders/{id}/
+* DELETE /train-station/orders/{id}/
+---
+### Routes
+* GET /train-station/routes/
+* POST /train-station/routes/
+* GET /train-station/routes/{id}/
+* PUT /train-station/routes/{id}/
+* PATCH /train-station/routes/{id}/
+* DELETE /train-station/routes/{id}/
+---
+### Station
+GET /train-station/stations/
+POST /train-station/stations/
+---
+### Train types
+
+* GET /train-station/train-types/
+* POST /train-station/train-types/
+---
+### Trains
+
+* GET /train-station/trains/
+* POST /train-station/trains/
+* GET /train-station/trains/{id}/
+* PUT /train-station/trains/{id}/
+* PATCH /train-station/trains/{id}/
+* DELETE /train-station/trains/{id}/
+---
+### Trips
+
+* GET /train-station/trips/
+* POST /train-station/trips/
+* GET /train-station/trips/{id}/
+* PUT /train-station/trips/{id}/
+* PATCH /train-station/trips/{id}/
+* DELETE /train-station/trips/{id}/
+---
 
 ## Environment Variables
 

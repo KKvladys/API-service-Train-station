@@ -71,8 +71,8 @@ train-station
 * DELETE /train-station/routes/{id}/
 ---
 ### Station
-GET /train-station/stations/
-POST /train-station/stations/
+* GET /train-station/stations/
+* POST /train-station/stations/
 ---
 ### Train types
 

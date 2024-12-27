@@ -9,8 +9,7 @@ This is a Django REST API for managing train stations, routes, trains, trips, an
 - Permission-based access control for different users.
 ---
 ## Database Structure
-![img.png](img.png)
-
+![img.png](bd-scheme.png)
 ---
 ## Setup Instructions
 

@@ -20,13 +20,20 @@ from django.urls import path, include
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
-    SpectacularSwaggerView)
+    SpectacularSwaggerView,
+)
 
 
 urlpatterns = [
     path("api/doc/", SpectacularAPIView.as_view(), name="schema"),
-   path("api/doc/swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
-   path("api/doc/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    path(
+        "api/doc/swagger/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+    path(
+        "api/doc/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"
+    ),
     path("train-station/", include("train_station.urls")),
     path("user/", include("user.urls")),
     path("admin/", admin.site.urls),

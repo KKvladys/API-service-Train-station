@@ -4,20 +4,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
-from train_station.filters import (
-    StationFilter,
-    RouteFilter,
-    TripFilter
-)
-from train_station.models import (
-    Station,
-    Route,
-    TrainType,
-    Train,
-    Order,
-    Trip,
-    Crew
-)
+from train_station.filters import StationFilter, RouteFilter, TripFilter
+from train_station.models import Station, Route, TrainType, Train, Order, Trip, Crew
 from train_station.permisions import IsAdminOrIfAuthenticatedReadOnly
 from train_station.serializers import (
     CrewSerializer,
@@ -30,7 +18,7 @@ from train_station.serializers import (
     RouteListSerializer,
     TrainListSerializer,
     OrderListSerializer,
-    TripListSerializer
+    TripListSerializer,
 )
 
 
@@ -122,11 +110,7 @@ class TripViewSet(viewsets.ModelViewSet):
         return serializer_class
 
 
-class TrainTypeViewSet(
-    mixins.CreateModelMixin,
-    mixins.ListModelMixin,
-    GenericViewSet
-):
+class TrainTypeViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericViewSet):
     queryset = TrainType.objects.all()
     serializer_class = TrainTypeSerializer
     permission_classes = (IsAdminUser,)

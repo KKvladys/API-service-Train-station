@@ -4,9 +4,7 @@ from train_station.models import Station, Route, Trip
 
 
 class StationFilter(filters.FilterSet):
-    name = filters.CharFilter(
-        field_name="name", lookup_expr="icontains"
-    )
+    name = filters.CharFilter(field_name="name", lookup_expr="icontains")
 
     class Meta:
         model = Station
@@ -14,13 +12,9 @@ class StationFilter(filters.FilterSet):
 
 
 class RouteFilter(filters.FilterSet):
-    source = filters.CharFilter(
-        field_name="source__name",
-        lookup_expr="icontains"
-    )
+    source = filters.CharFilter(field_name="source__name", lookup_expr="icontains")
     destination = filters.CharFilter(
-        field_name="destination__name",
-        lookup_expr="icontains"
+        field_name="destination__name", lookup_expr="icontains"
     )
 
     class Meta:
@@ -41,9 +35,4 @@ class TripFilter(filters.FilterSet):
 
     class Meta:
         model = Trip
-        fields = (
-            "source_station",
-            "destination_station",
-            "departure_time"
-        )
-
+        fields = ("source_station", "destination_station", "departure_time")

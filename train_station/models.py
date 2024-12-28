@@ -43,7 +43,7 @@ class Train(models.Model):
 
     @property
     def capacity(self):
-        return  self.cargo_num * self.places_in_cargo
+        return self.cargo_num * self.places_in_cargo
 
     def __str__(self) -> str:
         return self.name
@@ -51,9 +51,7 @@ class Train(models.Model):
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return str(self.created_at)
@@ -63,28 +61,22 @@ class Order(models.Model):
 
 
 class Trip(models.Model):
-    route = models.ForeignKey(
-        Route, related_name="trips", on_delete=models.CASCADE
-    )
-    train = models.ForeignKey(
-        Train, related_name="trips", on_delete=models.CASCADE
-    )
+    route = models.ForeignKey(Route, related_name="trips", on_delete=models.CASCADE)
+    train = models.ForeignKey(Train, related_name="trips", on_delete=models.CASCADE)
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
-    crew = models.ManyToManyField(
-        "Crew", related_name="trips"
-    )
+    crew = models.ManyToManyField("Crew", related_name="trips")
 
     def clean(self):
         if self.arrival_time <= self.departure_time:
-            raise ValidationError(
-                "Arrival time must be after departure time."
-            )
+            raise ValidationError("Arrival time must be after departure time.")
 
     def __str__(self) -> str:
-        return (f"({str(self.departure_time)}) "
-                f"{str(self.route)} "
-                f"({str(self.arrival_time)})")
+        return (
+            f"({str(self.departure_time)}) "
+            f"{str(self.route)} "
+            f"({str(self.arrival_time)})"
+        )
 
     class Meta:
         ordering = ("departure_time",)
@@ -94,12 +86,8 @@ class Trip(models.Model):
 class Ticket(models.Model):
     cargo = models.IntegerField()
     seat = models.IntegerField()
-    trip = models.ForeignKey(
-        Trip, related_name="tickets", on_delete=models.CASCADE
-    )
-    order = models.ForeignKey(
-        Order, related_name="tickets", on_delete=models.CASCADE
-    )
+    trip = models.ForeignKey(Trip, related_name="tickets", on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, related_name="tickets", on_delete=models.CASCADE)
 
     @staticmethod
     def validate_ticket(cargo, seat, train, error_to_raise) -> None:
@@ -112,9 +100,9 @@ class Ticket(models.Model):
                 raise error_to_raise(
                     {
                         ticket_attr_name: f"{ticket_attr_name} "
-                                          f"number must be in available range: "
-                                          f"(1, {train_attr_name}): "
-                                          f"(1, {count_attrs})"
+                        f"number must be in available range: "
+                        f"(1, {train_attr_name}): "
+                        f"(1, {count_attrs})"
                     }
                 )
 
@@ -127,21 +115,17 @@ class Ticket(models.Model):
         )
 
     def save(
-            self,
-            force_insert=False,
-            force_update=False,
-            using=None,
-            update_fields=None,
+        self,
+        force_insert=False,
+        force_update=False,
+        using=None,
+        update_fields=None,
     ):
         self.full_clean()
-        super(Ticket, self).save(
-            force_insert, force_update, using, update_fields
-        )
+        super(Ticket, self).save(force_insert, force_update, using, update_fields)
 
     def __str__(self):
-        return (f"{str(self.trip)}"
-                f" (cargo: {self.cargo}, "
-                f"seat: {self.seat})")
+        return f"{str(self.trip)}" f" (cargo: {self.cargo}, " f"seat: {self.seat})"
 
     class Meta:
         unique_together = ("trip", "cargo", "seat")

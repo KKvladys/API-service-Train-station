@@ -4,10 +4,32 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 
+def validate_latitude(value):
+    if not (-90 <= value <= 90):
+        raise ValidationError(
+            "Latitude must be in range -90 to 90."
+        )
+
+
+def validate_longitude(value):
+    if not (-180 <= value <= 180):
+        raise ValidationError(
+            "Longitude must be in range -180 to 180."
+        )
+
+
 class Station(models.Model):
     name = models.CharField(max_length=255)
-    latitude = models.FloatField(MinValueValidator(1.0))
-    longitude = models.FloatField(MinValueValidator(1.0))
+    latitude = models.FloatField(validators=[validate_latitude])
+    longitude = models.FloatField(validators=[validate_longitude])
+
+    class Meta:
+        verbose_name = "Station"
+        verbose_name_plural = "Stations"
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return self.name
@@ -22,12 +44,33 @@ class Route(models.Model):
     )
     distance = models.PositiveIntegerField()
 
+    class Meta:
+        verbose_name = "Route"
+        verbose_name_plural = "Routes"
+        indexes = [
+            models.Index(fields=["source", "destination"]),
+        ]
+
+    def clean(self) -> None:
+        if self.source == self.destination:
+            raise ValidationError(
+                "Source and destination cannot be the same."
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
     def __str__(self) -> str:
         return f"{self.source} - {self.destination}"
 
 
 class TrainType(models.Model):
     name = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = "Train Type"
+        verbose_name_plural = "Train Types"
 
     def __str__(self) -> str:
         return self.name
@@ -41,6 +84,11 @@ class Train(models.Model):
         TrainType, related_name="trains", on_delete=models.CASCADE
     )
 
+    class Meta:
+        verbose_name = "Train"
+        verbose_name_plural = "Trains"
+        unique_together = ("name", "train_type")
+
     @property
     def capacity(self):
         return self.cargo_num * self.places_in_cargo
@@ -51,25 +99,45 @@ class Train(models.Model):
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
 
     def __str__(self) -> str:
         return str(self.created_at)
 
     class Meta:
         ordering = ["-created_at"]
+        verbose_name = "Order"
+        verbose_name_plural = "Orders"
 
 
 class Trip(models.Model):
-    route = models.ForeignKey(Route, related_name="trips", on_delete=models.CASCADE)
-    train = models.ForeignKey(Train, related_name="trips", on_delete=models.CASCADE)
+    route = models.ForeignKey(
+        Route, related_name="trips", on_delete=models.CASCADE
+    )
+    train = models.ForeignKey(
+        Train, related_name="trips", on_delete=models.CASCADE
+    )
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
     crew = models.ManyToManyField("Crew", related_name="trips")
 
+    class Meta:
+        ordering = ("departure_time",)
+        unique_together = ("route", "train", "departure_time")
+        verbose_name = "Trip"
+        verbose_name_plural = "Trips"
+
     def clean(self):
         if self.arrival_time <= self.departure_time:
-            raise ValidationError("Arrival time must be after departure time.")
+            raise ValidationError(
+                "Arrival time must be after departure time."
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return (
@@ -78,32 +146,34 @@ class Trip(models.Model):
             f"({str(self.arrival_time)})"
         )
 
-    class Meta:
-        ordering = ("departure_time",)
-        unique_together = ("route", "train", "departure_time")
-
 
 class Ticket(models.Model):
-    cargo = models.IntegerField()
-    seat = models.IntegerField()
-    trip = models.ForeignKey(Trip, related_name="tickets", on_delete=models.CASCADE)
-    order = models.ForeignKey(Order, related_name="tickets", on_delete=models.CASCADE)
+    cargo = models.PositiveIntegerField()
+    seat = models.PositiveIntegerField()
+    trip = models.ForeignKey(
+        Trip, related_name="tickets", on_delete=models.CASCADE
+    )
+    order = models.ForeignKey(
+        Order, related_name="tickets", on_delete=models.CASCADE
+    )
+
+    class Meta:
+        unique_together = ("trip", "cargo", "seat")
+        ordering = ("cargo", "seat")
+        verbose_name = "Ticket"
+        verbose_name_plural = "Tickets"
 
     @staticmethod
-    def validate_ticket(cargo, seat, train, error_to_raise) -> None:
-        for ticket_attr_value, ticket_attr_name, train_attr_name in [
-            (cargo, "cargo", "cargo_num"),
-            (seat, "seat", "places_in_cargo"),
-        ]:
-            count_attrs = getattr(train, train_attr_name)
-            if not (1 <= ticket_attr_value <= count_attrs):
-                raise error_to_raise(
-                    {
-                        ticket_attr_name: f"{ticket_attr_name} "
-                        f"number must be in available range: "
-                        f"(1, {train_attr_name}): "
-                        f"(1, {count_attrs})"
-                    }
+    def validate_ticket(cargo, seat, train):
+        constraints = {
+            "cargo": train.cargo_num,
+            "seat": train.places_in_cargo,
+        }
+        for field, max_value in constraints.items():
+            value = locals()[field]
+            if not (1 <= value <= max_value):
+                raise ValidationError(
+                    f"{field.capitalize()} must be between 1 and {max_value}."
                 )
 
     def clean(self) -> None:
@@ -111,30 +181,36 @@ class Ticket(models.Model):
             self.cargo,
             self.seat,
             self.trip.train,
-            ValidationError,
         )
 
     def save(
-        self,
-        force_insert=False,
-        force_update=False,
-        using=None,
-        update_fields=None,
+            self,
+            force_insert=False,
+            force_update=False,
+            using=None,
+            update_fields=None,
     ):
         self.full_clean()
-        super(Ticket, self).save(force_insert, force_update, using, update_fields)
+        super(Ticket, self).save(
+            force_insert,
+            force_update,
+            using,
+            update_fields
+        )
 
     def __str__(self):
-        return f"{str(self.trip)}" f" (cargo: {self.cargo}, " f"seat: {self.seat})"
-
-    class Meta:
-        unique_together = ("trip", "cargo", "seat")
-        ordering = ("cargo", "seat")
+        return (f"{str(self.trip)} "
+                f" (cargo: {self.cargo}, "
+                f"seat: {self.seat})")
 
 
 class Crew(models.Model):
     first_name = models.CharField(max_length=63)
     last_name = models.CharField(max_length=63)
+
+    class Meta:
+        verbose_name = "Crew"
+        verbose_name_plural = "Crews"
 
     @property
     def full_name(self) -> str:

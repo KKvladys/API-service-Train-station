@@ -79,7 +79,7 @@
         }
     },
     {
-        "model": "accounts.user",
+        "model": "user.user",
         "pk": 1,
         "fields": {
             "email": "user1@example.com",
@@ -90,7 +90,7 @@
         }
     },
     {
-        "model": "accounts.user",
+        "model": "user.user",
         "pk": 2,
         "fields": {
             "email": "user2@example.com",
@@ -227,7 +227,7 @@
         }
     },
     {
-        "model": "accounts.user",
+        "model": "user.user",
         "pk": 3,
         "fields": {
             "email": "user3@example.com",
@@ -238,7 +238,7 @@
         }
     },
     {
-        "model": "accounts.user",
+        "model": "user.user",
         "pk": 4,
         "fields": {
             "email": "user4@example.com",
@@ -385,7 +385,7 @@
         }
     },
     {
-        "model": "accounts.user",
+        "model": "user.user",
         "pk": 5,
         "fields": {
             "email": "user5@example.com",
@@ -396,7 +396,7 @@
         }
     },
     {
-        "model": "accounts.user",
+        "model": "user.user",
         "pk": 6,
         "fields": {
             "email": "user6@example.com",
@@ -542,7 +542,7 @@
         }
     },
     {
-        "model": "accounts.user",
+        "model": "user.user",
         "pk": 7,
         "fields": {
             "email": "user7@example.com",
@@ -553,7 +553,7 @@
         }
     },
     {
-        "model": "accounts.user",
+        "model": "user.user",
         "pk": 8,
         "fields": {
             "email": "user8@example.com",
@@ -699,7 +699,7 @@
         }
     },
     {
-        "model": "accounts.user",
+        "model": "user.user",
         "pk": 9,
         "fields": {
             "email": "user9@example.com",
@@ -710,7 +710,7 @@
         }
     },
     {
-        "model": "accounts.user",
+        "model": "user.user",
         "pk": 10,
         "fields": {
             "email": "user10@example.com",
@@ -856,7 +856,7 @@
         }
     },
     {
-        "model": "accounts.user",
+        "model": "user.user",
         "pk": 11,
         "fields": {
             "email": "user11@example.com",
@@ -867,7 +867,7 @@
         }
     },
     {
-        "model": "accounts.user",
+        "model": "user.user",
         "pk": 12,
         "fields": {
             "email": "user12@example.com",

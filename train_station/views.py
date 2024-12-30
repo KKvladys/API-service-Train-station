@@ -4,8 +4,20 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
-from train_station.filters import StationFilter, RouteFilter, TripFilter
-from train_station.models import Station, Route, TrainType, Train, Order, Trip, Crew
+from train_station.filters import (
+    StationFilter,
+    RouteFilter,
+    TripFilter
+)
+from train_station.models import (
+    Station,
+    Route,
+    TrainType,
+    Train,
+    Order,
+    Trip,
+    Crew
+)
 from train_station.permisions import IsAdminOrIfAuthenticatedReadOnly
 from train_station.serializers import (
     CrewSerializer,
@@ -19,6 +31,8 @@ from train_station.serializers import (
     TrainListSerializer,
     OrderListSerializer,
     TripListSerializer,
+    CrewListSerializer,
+    OrderRetrieveSerializer, TripRetrieveSerializer,
 )
 
 
@@ -33,9 +47,13 @@ class CrewViewSet(
     mixins.ListModelMixin,
     GenericViewSet,
 ):
-    queryset = Crew.objects.all()
-    serializer_class = CrewSerializer
+    queryset = Crew.objects
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return CrewListSerializer
+        return CrewSerializer
 
 
 class StationViewSet(
@@ -45,7 +63,7 @@ class StationViewSet(
 ):
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = StationFilter
-    queryset = Station.objects.all()
+    queryset = Station.objects
     serializer_class = StationSerializer
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
@@ -76,16 +94,20 @@ class TrainViewSet(viewsets.ModelViewSet):
 
 class OrderViewSet(viewsets.ModelViewSet):
     pagination_class = TripOrderViewPagination
-    queryset = Order.objects.all()
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        queryset = Order.objects.prefetch_related(
+            "tickets__trip__route__source"
+        )
+        return queryset.filter(user=self.request.user)
 
     def get_serializer_class(self):
         serializer_class = OrderSerializer
         if self.action == "list":
             return OrderListSerializer
+        if self.action =="retrieve":
+            return OrderRetrieveSerializer
         return serializer_class
 
     def perform_create(self, serializer):
@@ -95,8 +117,10 @@ class OrderViewSet(viewsets.ModelViewSet):
 class TripViewSet(viewsets.ModelViewSet):
     queryset = (
         Trip.objects.all()
-        .select_related("route__source", "route__destination", "train")
-        .prefetch_related("crew")
+        .select_related(
+            "route__source", "route__destination", "train"
+        )
+        .prefetch_related("crew", "tickets")
     )
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = TripFilter
@@ -104,13 +128,18 @@ class TripViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
-        serializer_class = TripSerializer
         if self.action == "list":
             return TripListSerializer
-        return serializer_class
+        if self.action == "retrieve":
+            return TripRetrieveSerializer
+        return TripSerializer
 
 
-class TrainTypeViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericViewSet):
-    queryset = TrainType.objects.all()
+class TrainTypeViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    GenericViewSet
+):
+    queryset = TrainType.objects
     serializer_class = TrainTypeSerializer
     permission_classes = (IsAdminUser,)

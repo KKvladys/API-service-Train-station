@@ -61,8 +61,6 @@ class Route(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
-    def __str__(self) -> str:
-        return f"{self.source} - {self.destination}"
 
 
 class TrainType(models.Model):

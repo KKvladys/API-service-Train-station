@@ -26,16 +26,15 @@ class RouteSerializer(serializers.ModelSerializer):
 
 
 class RouteListSerializer(RouteSerializer):
-    source = serializers.SlugRelatedField(many=False, read_only=True, slug_field="name")
+    """
+    Serializer for a list of routes with station names displayed.
+    """
+    source = serializers.SlugRelatedField(
+        many=False, read_only=True, slug_field="name"
+    )
     destination = serializers.SlugRelatedField(
         many=False, read_only=True, slug_field="name"
     )
-    # source = serializers.CharField(
-    #     source="source.name", read_only=True
-    # )
-    # destination = serializers.CharField(
-    #     source="destination.name", read_only=True
-    # )
 
 
 class TrainTypeSerializer(serializers.ModelSerializer):
@@ -45,6 +44,8 @@ class TrainTypeSerializer(serializers.ModelSerializer):
 
 
 class TrainSerializer(serializers.ModelSerializer):
+    capacity = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Train
         fields = (
@@ -58,6 +59,9 @@ class TrainSerializer(serializers.ModelSerializer):
 
 
 class TrainListSerializer(TrainSerializer):
+    """
+    List of trains with train type displayed.
+    """
     train_type = serializers.SlugRelatedField(
         many=False, read_only=True, slug_field="name"
     )
@@ -69,17 +73,66 @@ class CrewSerializer(serializers.ModelSerializer):
         fields = ("id", "first_name", "last_name", "full_name")
 
 
+class CrewListSerializer(CrewSerializer):
+    """
+    Crew list with full name displayed.
+    """
+
+    class Meta:
+        model = Crew
+        fields = ("id", "full_name")
+
+
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ("id", "cargo", "seat", "trip")
 
 
-class TicketDetailSerializer(TicketSerializer):
-    trip = serializers.SerializerMethodField()
-    departure_time = serializers.CharField(source="trip.departure_time", read_only=True)
-    arrival_time = serializers.CharField(source="trip.arrival_time", read_only=True)
-    train = serializers.CharField(source="trip.train.name", read_only=True)
+class TicketSeatsSerializer(TicketSerializer):
+    class Meta:
+        model = Ticket
+        fields = ("cargo", "seat")
+
+
+class TicketListSerializer(TicketSerializer):
+    """
+    List of tickets with route.
+    """
+    route = RouteListSerializer(
+        source="trip.route", many=False, read_only=True
+    )
+    departure_time = serializers.CharField(
+        source="trip.departure_time", read_only=True
+    )
+    arrival_time = serializers.CharField(
+        source="trip.arrival_time", read_only=True
+    )
+
+    class Meta:
+        model = Ticket
+        fields = (
+            "cargo",
+            "seat",
+            "route",
+            "departure_time",
+            "arrival_time",
+        )
+
+
+class TicketDetailSerializer(TicketListSerializer):
+    """
+    List of tickets with route details.
+    """
+    source = serializers.CharField(
+        source="trip.route.source.name"
+    )
+    destination = serializers.CharField(
+        source="trip.route.destination.name"
+    )
+    train = serializers.CharField(
+        source="trip.train.name", read_only=True
+    )
 
     class Meta:
         model = Ticket
@@ -87,24 +140,30 @@ class TicketDetailSerializer(TicketSerializer):
             "id",
             "cargo",
             "seat",
-            "trip",
+            "source",
             "departure_time",
+            "destination",
             "arrival_time",
             "train",
         )
 
-    def get_trip(self, obj):
-        return str(obj.trip.route)
-
 
 class OrderSerializer(serializers.ModelSerializer):
-    tickets = TicketSerializer(many=True, read_only=False, allow_empty=False)
+    """
+    Serializer for working with orders.
+    """
+    tickets = TicketSerializer(
+        many=True, read_only=False, allow_empty=False
+    )
 
     class Meta:
         model = Order
         fields = ("id", "created_at", "tickets")
 
     def create(self, validated_data):
+        """
+        Creating an order with tickets.
+        """
         with transaction.atomic():
             tickets_data = validated_data.pop("tickets")
             order = Order.objects.create(**validated_data)
@@ -114,7 +173,15 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderListSerializer(OrderSerializer):
-    tickets = TicketDetailSerializer(many=True, read_only=True)
+    tickets = TicketListSerializer(
+        many=True, read_only=True
+    )
+
+
+class OrderRetrieveSerializer(OrderSerializer):
+    tickets = TicketDetailSerializer(
+        many=True, read_only=True
+    )
 
 
 class TripSerializer(serializers.ModelSerializer):
@@ -131,7 +198,10 @@ class TripSerializer(serializers.ModelSerializer):
 
 
 class TripListSerializer(TripSerializer):
-    route = RouteListSerializer(read_only=True)
+    """
+    List of trips with available tickets.
+    """
+    route = serializers.SerializerMethodField()
     train = serializers.CharField(source="train.name", read_only=True)
     crew = serializers.SlugRelatedField(
         many=True, read_only=True, slug_field="full_name"
@@ -150,7 +220,41 @@ class TripListSerializer(TripSerializer):
             "crew",
         )
 
+    def get_route(self, obj):
+        """
+        Get the names trip's source and destination points
+        """
+        return {
+            "source": obj.route.source.name,
+            "destination": obj.route.destination.name,
+        }
+
     def get_tickets_available(self, obj):
+        """
+        Calculating available tickets for the trip.
+        """
         tickets_taken = obj.tickets.count()
         capacity = obj.train.capacity
         return capacity - tickets_taken
+
+
+class TripRetrieveSerializer(TripListSerializer):
+    route = RouteListSerializer(
+        many=False, read_only=True
+    )
+    taken_places = TicketSeatsSerializer(
+        source="tickets", many=True, read_only=True
+    )
+
+    class Meta:
+        model = Trip
+        fields = (
+            "id",
+            "route",
+            "train",
+            "tickets_available",
+            "departure_time",
+            "arrival_time",
+            "crew",
+            "taken_places"
+        )

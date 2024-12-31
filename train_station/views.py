@@ -18,7 +18,7 @@ from train_station.models import (
     Trip,
     Crew
 )
-from train_station.permisions import IsAdminOrIfAuthenticatedReadOnly
+from train_station.permissions import IsAdminOrIfAuthenticatedReadOnly
 from train_station.serializers import (
     CrewSerializer,
     StationSerializer,
@@ -32,7 +32,8 @@ from train_station.serializers import (
     OrderListSerializer,
     TripListSerializer,
     CrewListSerializer,
-    OrderRetrieveSerializer, TripRetrieveSerializer,
+    OrderRetrieveSerializer,
+    TripRetrieveSerializer,
 )
 
 
@@ -106,7 +107,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer_class = OrderSerializer
         if self.action == "list":
             return OrderListSerializer
-        if self.action =="retrieve":
+        if self.action == "retrieve":
             return OrderRetrieveSerializer
         return serializer_class
 

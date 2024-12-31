@@ -62,7 +62,6 @@ class Route(models.Model):
         super().save(*args, **kwargs)
 
 
-
 class TrainType(models.Model):
     name = models.CharField(max_length=255)
 
@@ -123,9 +122,24 @@ class Trip(models.Model):
 
     class Meta:
         ordering = ("departure_time",)
-        unique_together = ("route", "train", "departure_time")
         verbose_name = "Trip"
         verbose_name_plural = "Trips"
+
+    @staticmethod
+    def validate_train_departure_time(train, departure_time, instance_id=None):
+        """
+        Validate unique fields train и departure_time.
+        """
+        query = Trip.objects.filter(
+            train=train, departure_time=departure_time
+        )
+        if instance_id:
+            query = query.exclude(id=instance_id)
+
+        if query.exists():
+            raise ValidationError(
+                "This train is already taken at this time."
+            )
 
     def clean(self):
         if self.arrival_time <= self.departure_time:
@@ -156,7 +170,12 @@ class Ticket(models.Model):
     )
 
     class Meta:
-        unique_together = ("trip", "cargo", "seat")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["trip", "cargo", "seat"],
+                name="unique_trip_cargo_seat"
+            )
+        ]
         ordering = ("cargo", "seat")
         verbose_name = "Ticket"
         verbose_name_plural = "Tickets"

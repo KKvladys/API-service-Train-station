@@ -1,4 +1,7 @@
-from django.db import transaction
+from collections import defaultdict
+
+from django.core.exceptions import ValidationError
+from django.db import transaction, IntegrityError
 from rest_framework import serializers
 
 from train_station.models import (
@@ -167,8 +170,20 @@ class OrderSerializer(serializers.ModelSerializer):
         with transaction.atomic():
             tickets_data = validated_data.pop("tickets")
             order = Order.objects.create(**validated_data)
-            for ticket_data in tickets_data:
-                Ticket.objects.create(order=order, **ticket_data)
+
+            errors = defaultdict(list)
+            for idx, ticket_data in enumerate(tickets_data):
+                try:
+                    Ticket.objects.create(order=order, **ticket_data)
+                except IntegrityError as e:
+                    if "unique_trip_cargo_seat" in str(e):
+                        errors[f"tickets[{idx}]"].append(
+                            "Ticket with this trip, cargo, and seat already exists."
+                        )
+
+            if errors:
+                raise serializers.ValidationError(errors)
+
             return order
 
 
@@ -195,6 +210,20 @@ class TripSerializer(serializers.ModelSerializer):
             "arrival_time",
             "crew",
         )
+
+    def validate(self, attrs):
+        """
+        Check if train is already taken at this time
+        """
+        train = attrs.get("train")
+        departure_time = attrs.get("departure_time")
+        instance_id = self.instance.id if self.instance else None
+
+        try:
+            Trip.validate_train_departure_time(train, departure_time, instance_id)
+        except ValidationError as e:
+            raise serializers.ValidationError({"trip": e.messages})
+        return attrs
 
 
 class TripListSerializer(TripSerializer):

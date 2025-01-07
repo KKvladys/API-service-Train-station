@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 from django.core.exceptions import ValidationError
-from django.db import transaction, IntegrityError
+from django.db import transaction
 from rest_framework import serializers
 
 from train_station.models import (
@@ -80,7 +80,6 @@ class CrewListSerializer(CrewSerializer):
     """
     Crew list with full name displayed.
     """
-
     class Meta:
         model = Crew
         fields = ("id", "full_name")
@@ -173,13 +172,16 @@ class OrderSerializer(serializers.ModelSerializer):
 
             errors = defaultdict(list)
             for idx, ticket_data in enumerate(tickets_data):
-                try:
+                if Ticket.objects.filter(
+                    trip=ticket_data["trip"],
+                    cargo=ticket_data["cargo"],
+                    seat=ticket_data["seat"]
+                ).exists():
+                    errors[f"tickets[{idx}]"].append(
+                        "Ticket with this trip, cargo, and seat already exists."
+                    )
+                else:
                     Ticket.objects.create(order=order, **ticket_data)
-                except IntegrityError as e:
-                    if "unique_trip_cargo_seat" in str(e):
-                        errors[f"tickets[{idx}]"].append(
-                            "Ticket with this trip, cargo, and seat already exists."
-                        )
 
             if errors:
                 raise serializers.ValidationError(errors)
@@ -198,6 +200,10 @@ class OrderRetrieveSerializer(OrderSerializer):
         many=True, read_only=True
     )
 
+    class Meta:
+        model = Order
+        fields = ("id", "user", "created_at", "tickets")
+
 
 class TripSerializer(serializers.ModelSerializer):
     class Meta:
@@ -213,16 +219,24 @@ class TripSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         """
-        Check if train is already taken at this time
+        Check if the train is already taken at this time
+        and that arrival time is after departure time.
         """
         train = attrs.get("train")
         departure_time = attrs.get("departure_time")
+        arrival_time = attrs.get("arrival_time")
         instance_id = self.instance.id if self.instance else None
+
+        if arrival_time and departure_time and arrival_time <= departure_time:
+            raise serializers.ValidationError(
+                {"arrival_time": "Arrival time must be after departure time."}
+            )
 
         try:
             Trip.validate_train_departure_time(train, departure_time, instance_id)
         except ValidationError as e:
             raise serializers.ValidationError({"trip": e.messages})
+
         return attrs
 
 

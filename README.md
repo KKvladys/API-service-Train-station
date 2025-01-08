@@ -1,110 +1,133 @@
-# Train Station Management API
+# 🚅Train Station API
 
-This is a Django REST API for managing train stations, routes, trains, trips, and orders. The API provides functionality for users to view and manage stations, routes, train types, trips, tickets, and crew members. It supports features like filtering and pagination for better management of data.
-
-## Features
-- Manage stations, routes, trains, trip details, orders, and crews.
-- Filters to search and sort stations, routes, and trips.
-- Pagination for trip orders.
-- Permission-based access control for different users.
----
-## Database Structure
-![img.png](bd-scheme.png)
----
-## Setup Instructions
-
-### 1. Clone the repository
-```bash
-git clone https://github.com/KKvladys/api-service-train-station.git
-
-# Set up the virtual environment
-python -m venv venv
-source venv/bin/activate  # For macOS/Linux
-# venv\Scripts\activate   # For Windows
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up the database (make sure you have PostgreSQL running and configured)
-# Update DATABASES section in train_station/settings.py with your database credentials
-python manage.py migrate
-
-# Create a superuser (optional)
-python manage.py createsuperuser
-
-# Run the server locally
-python manage.py runserver
-```
-
----
-#### Running with Docker
-Build and Start the Services
-Use Docker Compose to build and run the application and database:
-```bash
-docker-compose up --build
-```
-***
-The API will be available at http://127.0.0.1:8000/
-
-API Endpoints:
-train-station
----
-### Crews
-* GET /train-station/crews/
-* POST /train-station/crews/
----
-### Orders
-
-* GET /train-station/orders/
-* POST /train-station/orders/
-* GET /train-station/orders/{id}/
-* PUT /train-station/orders/{id}/
-* PATCH /train-station/orders/{id}/
-* DELETE /train-station/orders/{id}/
----
-### Routes
-* GET /train-station/routes/
-* POST /train-station/routes/
-* GET /train-station/routes/{id}/
-* PUT /train-station/routes/{id}/
-* PATCH /train-station/routes/{id}/
-* DELETE /train-station/routes/{id}/
----
-### Station
-* GET /train-station/stations/
-* POST /train-station/stations/
----
-### Train types
-
-* GET /train-station/train-types/
-* POST /train-station/train-types/
----
-### Trains
-
-* GET /train-station/trains/
-* POST /train-station/trains/
-* GET /train-station/trains/{id}/
-* PUT /train-station/trains/{id}/
-* PATCH /train-station/trains/{id}/
-* DELETE /train-station/trains/{id}/
----
-### Trips
-
-* GET /train-station/trips/
-* POST /train-station/trips/
-* GET /train-station/trips/{id}/
-* PUT /train-station/trips/{id}/
-* PATCH /train-station/trips/{id}/
-* DELETE /train-station/trips/{id}/
+## Overview
+Train Station API is a RESTful web service 
+built using Django REST Framework (DRF) 
+that provides functionality to manage stations, 
+routes, trains, crew members and orders, ensuring 
+efficient operation and data processing in real time. 
+This project is designed to serve as a backend solution 
+for railway systems, offering endpoints to query and update 
+real-time data about stations, trains, and passengers.
 ---
 
-## Environment Variables
+##  ✨Features
+  - **CRUD Operations** for Train Stations, Routes, Trips, Orders, Crews.
+  - **Booking System**: Reserve and manage tickets for specific routes.
+  - **Authentication**: Secure access to endpoints using token-based authentication (JWT).
+  - **Pagination and Filtering**: Efficient querying of large datasets with customizable filters.
+  - **API Documentation**: Interactive API documentation using Swagger and ReDoc.
+---
 
-This project uses environment variables for configuration. A template file `.env.sample` is provided to guide you in setting up these variables. Before running the project, create a `.env` file based on the template and provide the required values.
+## 🛠️Technologies Used
+- Python 3.12
+- Django 5.1
+- Django REST Framework
+- PostgreSQL
+- Docker & Docker Compose
+- Poetry (dependency management)
+- JWT Authentication
+- Swagger/Redoc
+---
 
-### Setting Up Environment Variables
-1. Copy the `.env.sample` file to create your `.env` file:
+##  🗄️Database Structure
+![bd-scheme.png](bd-scheme.png)
 
+---
+## 🚀 Installation
+
+### Local Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/KKvladys/train-station-api.git
+   cd train-station-api
+   ```
+2. **Create and activate a virtual environment:**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On macOS/Linux
+   venv\Scripts\activate    # On Windows
+   ```
+3. **Install dependencies:**
+   ```bash
+   pip install poetry
+   poetry install
+   ```
+4. **Create a `.env` file:**
    ```bash
    cp .env.sample .env
-    ```
+   # Edit the .env file with your configurations
+   ```
+5. **Apply database migrations:**
+   ```bash
+   python manage.py migrate
+   ```
+6. **Create a superuser:**
+   ```bash
+   python manage.py createsuperuser
+   ```
+7. **Load Data:**
+   ```bash
+   python manage.py loaddata data.json
+   ```
+8. **Run the development server:**
+   ```bash
+   python manage.py runserver
+   ```
+
+### 🐳Running with Docker
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/KKvladys/train-station-api.git
+   cd train-station-api
+   ```
+2. **Create a `.env` file:**
+   ```bash
+   cp .env.sample .env
+   # Edit the .env file with your configurations
+   ```
+3. **Build and run containers:**
+   ```bash
+   docker-compose up --build
+   ```
+
+---
+## ⚙️Environment Variables
+
+This project uses environment variables for configuration. 
+A template file .env.sample is provided to guide you in setting 
+up these variables. Before running the project, create a .env file 
+based on the template and provide the required values.
+
+```
+# Database settings
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+POSTGRES_DB=train_station_db
+POSTGRES_USER=train_user
+POSTGRES_PASSWORD=strong_password
+
+# Django settings
+SECRET_KEY=your_secret_key
+DEBUG=True
+ALLOWED_HOSTS=*
+```
+---
+## ✅Testing
+
+The project includes unit tests for models, serializers, 
+views, and custom logic to ensure reliable functionality.
+
+To run unit tests, use the following command:
+
+```bash
+# Local environment
+python manage.py test  
+# or
+# Docker environment
+docker-compose exec app make test
+```
+
+

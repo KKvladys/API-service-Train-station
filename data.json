@@ -1,0 +1,953 @@
+[
+    {
+        "model": "train_station.station",
+        "pk": 1,
+        "fields": {
+            "name": "Kyiv-Pasazhyrskyi",
+            "latitude": 50.4404,
+            "longitude": 30.4891
+        }
+    },
+    {
+        "model": "train_station.station",
+        "pk": 2,
+        "fields": {
+            "name": "Lviv",
+            "latitude": 49.8397,
+            "longitude": 24.0297
+        }
+    },
+    {
+        "model": "train_station.station",
+        "pk": 3,
+        "fields": {
+            "name": "Odesa-Holovna",
+            "latitude": 46.4857,
+            "longitude": 30.7438
+        }
+    },
+    {
+        "model": "train_station.route",
+        "pk": 1,
+        "fields": {
+            "source": 1,
+            "destination": 2,
+            "distance": 540
+        }
+    },
+    {
+        "model": "train_station.route",
+        "pk": 2,
+        "fields": {
+            "source": 1,
+            "destination": 3,
+            "distance": 475
+        }
+    },
+    {
+        "model": "train_station.traintype",
+        "pk": 1,
+        "fields": {
+            "name": "Passenger"
+        }
+    },
+    {
+        "model": "train_station.traintype",
+        "pk": 2,
+        "fields": {
+            "name": "High-Speed"
+        }
+    },
+    {
+        "model": "train_station.train",
+        "pk": 1,
+        "fields": {
+            "name": "Intercity+",
+            "cargo_num": 5,
+            "places_in_cargo": 80,
+            "train_type": 2
+        }
+    },
+    {
+        "model": "train_station.train",
+        "pk": 2,
+        "fields": {
+            "name": "Passenger-101",
+            "cargo_num": 8,
+            "places_in_cargo": 100,
+            "train_type": 1
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 1,
+        "fields": {
+            "email": "user1@example.com",
+            "password": "pbkdf2_sha256$260000$hash1",
+            "is_staff": false,
+            "is_superuser": false,
+            "is_active": true
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 2,
+        "fields": {
+            "email": "user2@example.com",
+            "password": "pbkdf2_sha256$260000$hash2",
+            "is_staff": false,
+            "is_superuser": false,
+            "is_active": true
+        }
+    },
+    {
+        "model": "train_station.order",
+        "pk": 1,
+        "fields": {
+            "created_at": "2024-12-24T10:00:00Z",
+            "user": 1
+        }
+    },
+    {
+        "model": "train_station.trip",
+        "pk": 1,
+        "fields": {
+            "route": 1,
+            "train": 1,
+            "departure_time": "2024-12-25T08:00:00Z",
+            "arrival_time": "2024-12-25T14:00:00Z"
+        }
+    },
+    {
+        "model": "train_station.trip",
+        "pk": 2,
+        "fields": {
+            "route": 2,
+            "train": 2,
+            "departure_time": "2024-12-25T10:00:00Z",
+            "arrival_time": "2024-12-25T16:00:00Z"
+        }
+    },
+    {
+        "model": "train_station.ticket",
+        "pk": 1,
+        "fields": {
+            "cargo": 1,
+            "seat": 10,
+            "trip": 1,
+            "order": 1
+        }
+    },
+    {
+        "model": "train_station.crew",
+        "pk": 1,
+        "fields": {
+            "first_name": "Ivan",
+            "last_name": "Petrenko"
+        }
+    },
+    {
+        "model": "train_station.crew",
+        "pk": 2,
+        "fields": {
+            "first_name": "Oksana",
+            "last_name": "Shevchenko"
+        }
+    },
+    {
+        "model": "train_station.station",
+        "pk": 4,
+        "fields": {
+            "name": "Kharkiv-Pasazhyrskyi",
+            "latitude": 49.9935,
+            "longitude": 36.2304
+        }
+    },
+    {
+        "model": "train_station.station",
+        "pk": 5,
+        "fields": {
+            "name": "Dnipro-Holovnyi",
+            "latitude": 48.4647,
+            "longitude": 35.0462
+        }
+    },
+    {
+        "model": "train_station.station",
+        "pk": 6,
+        "fields": {
+            "name": "Zaporizhzhia-1",
+            "latitude": 47.8378,
+            "longitude": 35.1383
+        }
+    },
+    {
+        "model": "train_station.route",
+        "pk": 3,
+        "fields": {
+            "source": 4,
+            "destination": 5,
+            "distance": 217
+        }
+    },
+    {
+        "model": "train_station.route",
+        "pk": 4,
+        "fields": {
+            "source": 5,
+            "destination": 6,
+            "distance": 70
+        }
+    },
+    {
+        "model": "train_station.traintype",
+        "pk": 3,
+        "fields": {
+            "name": "Freight"
+        }
+    },
+    {
+        "model": "train_station.train",
+        "pk": 3,
+        "fields": {
+            "name": "Freight-202",
+            "cargo_num": 15,
+            "places_in_cargo": 60,
+            "train_type": 3
+        }
+    },
+    {
+        "model": "train_station.train",
+        "pk": 4,
+        "fields": {
+            "name": "Night Express",
+            "cargo_num": 10,
+            "places_in_cargo": 50,
+            "train_type": 1
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 3,
+        "fields": {
+            "email": "user3@example.com",
+            "password": "pbkdf2_sha256$260000$hash3",
+            "is_staff": false,
+            "is_superuser": false,
+            "is_active": true
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 4,
+        "fields": {
+            "email": "user4@example.com",
+            "password": "pbkdf2_sha256$260000$hash4",
+            "is_staff": false,
+            "is_superuser": false,
+            "is_active": true
+        }
+    },
+    {
+        "model": "train_station.order",
+        "pk": 2,
+        "fields": {
+            "created_at": "2024-12-24T12:00:00Z",
+            "user": 3
+        }
+    },
+    {
+        "model": "train_station.trip",
+        "pk": 3,
+        "fields": {
+            "route": 3,
+            "train": 3,
+            "departure_time": "2024-12-26T06:00:00Z",
+            "arrival_time": "2024-12-26T10:00:00Z"
+        }
+    },
+    {
+        "model": "train_station.trip",
+        "pk": 4,
+        "fields": {
+            "route": 4,
+            "train": 4,
+            "departure_time": "2024-12-26T18:00:00Z",
+            "arrival_time": "2024-12-26T20:00:00Z"
+        }
+    },
+    {
+        "model": "train_station.ticket",
+        "pk": 2,
+        "fields": {
+            "cargo": 2,
+            "seat": 5,
+            "trip": 3,
+            "order": 2
+        }
+    },
+    {
+        "model": "train_station.ticket",
+        "pk": 3,
+        "fields": {
+            "cargo": 3,
+            "seat": 15,
+            "trip": 4,
+            "order": 2
+        }
+    },
+    {
+        "model": "train_station.crew",
+        "pk": 3,
+        "fields": {
+            "first_name": "Mykola",
+            "last_name": "Hrytsenko"
+        }
+    },
+    {
+        "model": "train_station.crew",
+        "pk": 4,
+        "fields": {
+            "first_name": "Olena",
+            "last_name": "Ivanova"
+        }
+    },
+     {
+        "model": "train_station.station",
+        "pk": 7,
+        "fields": {
+            "name": "Odesa-Holovnyi",
+            "latitude": 46.4775,
+            "longitude": 30.7326
+        }
+    },
+    {
+        "model": "train_station.station",
+        "pk": 8,
+        "fields": {
+            "name": "Ivano-Frankivsk",
+            "latitude": 48.9226,
+            "longitude": 24.7104
+        }
+    },
+    {
+        "model": "train_station.station",
+        "pk": 9,
+        "fields": {
+            "name": "Chernihiv",
+            "latitude": 51.5055,
+            "longitude": 31.2849
+        }
+    },
+    {
+        "model": "train_station.route",
+        "pk": 5,
+        "fields": {
+            "source": 7,
+            "destination": 8,
+            "distance": 608
+        }
+    },
+    {
+        "model": "train_station.route",
+        "pk": 6,
+        "fields": {
+            "source": 9,
+            "destination": 1,
+            "distance": 148
+        }
+    },
+    {
+        "model": "train_station.traintype",
+        "pk": 4,
+        "fields": {
+            "name": "Luxury"
+        }
+    },
+    {
+        "model": "train_station.train",
+        "pk": 5,
+        "fields": {
+            "name": "Odesa Express",
+            "cargo_num": 20,
+            "places_in_cargo": 80,
+            "train_type": 4
+        }
+    },
+    {
+        "model": "train_station.train",
+        "pk": 6,
+        "fields": {
+            "name": "Chernihiv Star",
+            "cargo_num": 10,
+            "places_in_cargo": 60,
+            "train_type": 2
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 5,
+        "fields": {
+            "email": "user5@example.com",
+            "password": "pbkdf2_sha256$260000$hash5",
+            "is_staff": false,
+            "is_superuser": false,
+            "is_active": true
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 6,
+        "fields": {
+            "email": "user6@example.com",
+            "password": "pbkdf2_sha256$260000$hash6",
+            "is_staff": false,
+            "is_superuser": false,
+            "is_active": true
+        }
+    },
+    {
+        "model": "train_station.order",
+        "pk": 3,
+        "fields": {
+            "created_at": "2024-12-25T10:00:00Z",
+            "user": 5
+        }
+    },
+    {
+        "model": "train_station.order",
+        "pk": 4,
+        "fields": {
+            "created_at": "2024-12-25T15:00:00Z",
+            "user": 6
+        }
+    },
+    {
+        "model": "train_station.trip",
+        "pk": 5,
+        "fields": {
+            "route": 5,
+            "train": 5,
+            "departure_time": "2024-12-27T07:00:00Z",
+            "arrival_time": "2024-12-27T15:00:00Z"
+        }
+    },
+    {
+        "model": "train_station.trip",
+        "pk": 6,
+        "fields": {
+            "route": 6,
+            "train": 6,
+            "departure_time": "2024-12-27T09:00:00Z",
+            "arrival_time": "2024-12-27T11:00:00Z"
+        }
+    },
+    {
+        "model": "train_station.ticket",
+        "pk": 4,
+        "fields": {
+            "cargo": 5,
+            "seat": 20,
+            "trip": 5,
+            "order": 3
+        }
+    },
+    {
+        "model": "train_station.ticket",
+        "pk": 5,
+        "fields": {
+            "cargo": 1,
+            "seat": 8,
+            "trip": 6,
+            "order": 4
+        }
+    },
+    {
+        "model": "train_station.crew",
+        "pk": 5,
+        "fields": {
+            "first_name": "Serhiy",
+            "last_name": "Tkachenko"
+        }
+    },
+    {
+        "model": "train_station.crew",
+        "pk": 6,
+        "fields": {
+            "first_name": "Svitlana",
+            "last_name": "Petryk"
+        }
+    },
+    {
+        "model": "train_station.station",
+        "pk": 10,
+        "fields": {
+            "name": "Vinnytsia",
+            "latitude": 49.2331,
+            "longitude": 28.4682
+        }
+    },
+    {
+        "model": "train_station.station",
+        "pk": 11,
+        "fields": {
+            "name": "Kharkiv-Passazhyrskyi",
+            "latitude": 49.9945,
+            "longitude": 36.2304
+        }
+    },
+    {
+        "model": "train_station.route",
+        "pk": 7,
+        "fields": {
+            "source": 10,
+            "destination": 11,
+            "distance": 776
+        }
+    },
+    {
+        "model": "train_station.route",
+        "pk": 8,
+        "fields": {
+            "source": 8,
+            "destination": 9,
+            "distance": 506
+        }
+    },
+    {
+        "model": "train_station.traintype",
+        "pk": 5,
+        "fields": {
+            "name": "Night Train"
+        }
+    },
+    {
+        "model": "train_station.train",
+        "pk": 7,
+        "fields": {
+            "name": "Vinnytsia Express",
+            "cargo_num": 18,
+            "places_in_cargo": 72,
+            "train_type": 5
+        }
+    },
+    {
+        "model": "train_station.train",
+        "pk": 8,
+        "fields": {
+            "name": "Kharkiv Flyer",
+            "cargo_num": 12,
+            "places_in_cargo": 60,
+            "train_type": 3
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 7,
+        "fields": {
+            "email": "user7@example.com",
+            "password": "pbkdf2_sha256$260000$hash7",
+            "is_staff": true,
+            "is_superuser": false,
+            "is_active": true
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 8,
+        "fields": {
+            "email": "user8@example.com",
+            "password": "pbkdf2_sha256$260000$hash8",
+            "is_staff": false,
+            "is_superuser": false,
+            "is_active": true
+        }
+    },
+    {
+        "model": "train_station.order",
+        "pk": 5,
+        "fields": {
+            "created_at": "2024-12-26T12:00:00Z",
+            "user": 7
+        }
+    },
+    {
+        "model": "train_station.order",
+        "pk": 6,
+        "fields": {
+            "created_at": "2024-12-26T14:30:00Z",
+            "user": 8
+        }
+    },
+    {
+        "model": "train_station.trip",
+        "pk": 7,
+        "fields": {
+            "route": 7,
+            "train": 7,
+            "departure_time": "2024-12-28T21:00:00Z",
+            "arrival_time": "2024-12-29T05:30:00Z"
+        }
+    },
+    {
+        "model": "train_station.trip",
+        "pk": 8,
+        "fields": {
+            "route": 8,
+            "train": 8,
+            "departure_time": "2024-12-28T10:00:00Z",
+            "arrival_time": "2024-12-28T17:30:00Z"
+        }
+    },
+    {
+        "model": "train_station.ticket",
+        "pk": 6,
+        "fields": {
+            "cargo": 2,
+            "seat": 14,
+            "trip": 7,
+            "order": 5
+        }
+    },
+    {
+        "model": "train_station.ticket",
+        "pk": 7,
+        "fields": {
+            "cargo": 4,
+            "seat": 35,
+            "trip": 8,
+            "order": 6
+        }
+    },
+    {
+        "model": "train_station.crew",
+        "pk": 7,
+        "fields": {
+            "first_name": "Oleh",
+            "last_name": "Shevchenko"
+        }
+    },
+    {
+        "model": "train_station.crew",
+        "pk": 8,
+        "fields": {
+            "first_name": "Nadiia",
+            "last_name": "Kyrylenko"
+        }
+    },
+    {
+        "model": "train_station.station",
+        "pk": 12,
+        "fields": {
+            "name": "Lutsk",
+            "latitude": 50.7472,
+            "longitude": 25.3254
+        }
+    },
+    {
+        "model": "train_station.station",
+        "pk": 13,
+        "fields": {
+            "name": "Kropyvnytskyi",
+            "latitude": 48.5079,
+            "longitude": 32.2623
+        }
+    },
+    {
+        "model": "train_station.route",
+        "pk": 9,
+        "fields": {
+            "source": 12,
+            "destination": 13,
+            "distance": 513
+        }
+    },
+    {
+        "model": "train_station.route",
+        "pk": 10,
+        "fields": {
+            "source": 6,
+            "destination": 12,
+            "distance": 431
+        }
+    },
+    {
+        "model": "train_station.traintype",
+        "pk": 6,
+        "fields": {
+            "name": "High-Speed Train"
+        }
+    },
+    {
+        "model": "train_station.train",
+        "pk": 9,
+        "fields": {
+            "name": "Lutsk Arrow",
+            "cargo_num": 10,
+            "places_in_cargo": 50,
+            "train_type": 6
+        }
+    },
+    {
+        "model": "train_station.train",
+        "pk": 10,
+        "fields": {
+            "name": "Kropyvnytskyi Cruiser",
+            "cargo_num": 16,
+            "places_in_cargo": 64,
+            "train_type": 5
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 9,
+        "fields": {
+            "email": "user9@example.com",
+            "password": "pbkdf2_sha256$260000$hash9",
+            "is_staff": true,
+            "is_superuser": false,
+            "is_active": true
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 10,
+        "fields": {
+            "email": "user10@example.com",
+            "password": "pbkdf2_sha256$260000$hash10",
+            "is_staff": false,
+            "is_superuser": false,
+            "is_active": true
+        }
+    },
+    {
+        "model": "train_station.order",
+        "pk": 7,
+        "fields": {
+            "created_at": "2024-12-27T10:15:00Z",
+            "user": 9
+        }
+    },
+    {
+        "model": "train_station.order",
+        "pk": 8,
+        "fields": {
+            "created_at": "2024-12-27T13:45:00Z",
+            "user": 10
+        }
+    },
+    {
+        "model": "train_station.trip",
+        "pk": 9,
+        "fields": {
+            "route": 9,
+            "train": 9,
+            "departure_time": "2024-12-28T08:00:00Z",
+            "arrival_time": "2024-12-28T13:30:00Z"
+        }
+    },
+    {
+        "model": "train_station.trip",
+        "pk": 10,
+        "fields": {
+            "route": 10,
+            "train": 10,
+            "departure_time": "2024-12-29T16:00:00Z",
+            "arrival_time": "2024-12-29T21:15:00Z"
+        }
+    },
+    {
+        "model": "train_station.ticket",
+        "pk": 8,
+        "fields": {
+            "cargo": 5,
+            "seat": 18,
+            "trip": 9,
+            "order": 7
+        }
+    },
+    {
+        "model": "train_station.ticket",
+        "pk": 9,
+        "fields": {
+            "cargo": 3,
+            "seat": 22,
+            "trip": 10,
+            "order": 8
+        }
+    },
+    {
+        "model": "train_station.crew",
+        "pk": 9,
+        "fields": {
+            "first_name": "Andriy",
+            "last_name": "Petrenko"
+        }
+    },
+    {
+        "model": "train_station.crew",
+        "pk": 10,
+        "fields": {
+            "first_name": "Svitlana",
+            "last_name": "Koval"
+        }
+    },
+    {
+        "model": "train_station.station",
+        "pk": 14,
+        "fields": {
+            "name": "Ivano-Frankivsk",
+            "latitude": 48.9215,
+            "longitude": 24.7097
+        }
+    },
+    {
+        "model": "train_station.station",
+        "pk": 15,
+        "fields": {
+            "name": "Chernivtsi",
+            "latitude": 48.2917,
+            "longitude": 25.9403
+        }
+    },
+    {
+        "model": "train_station.route",
+        "pk": 11,
+        "fields": {
+            "source": 14,
+            "destination": 15,
+            "distance": 120
+        }
+    },
+    {
+        "model": "train_station.route",
+        "pk": 12,
+        "fields": {
+            "source": 15,
+            "destination": 14,
+            "distance": 120
+        }
+    },
+    {
+        "model": "train_station.traintype",
+        "pk": 7,
+        "fields": {
+            "name": "Luxury Train"
+        }
+    },
+    {
+        "model": "train_station.train",
+        "pk": 11,
+        "fields": {
+            "name": "Ivano Express",
+            "cargo_num": 8,
+            "places_in_cargo": 40,
+            "train_type": 7
+        }
+    },
+    {
+        "model": "train_station.train",
+        "pk": 12,
+        "fields": {
+            "name": "Chernivtsi Comfort",
+            "cargo_num": 12,
+            "places_in_cargo": 48,
+            "train_type": 6
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 11,
+        "fields": {
+            "email": "user11@example.com",
+            "password": "pbkdf2_sha256$260000$hash11",
+            "is_staff": false,
+            "is_superuser": false,
+            "is_active": true
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 12,
+        "fields": {
+            "email": "user12@example.com",
+            "password": "pbkdf2_sha256$260000$hash12",
+            "is_staff": false,
+            "is_superuser": false,
+            "is_active": true
+        }
+    },
+    {
+        "model": "train_station.order",
+        "pk": 9,
+        "fields": {
+            "created_at": "2024-12-27T15:00:00Z",
+            "user": 11
+        }
+    },
+    {
+        "model": "train_station.order",
+        "pk": 10,
+        "fields": {
+            "created_at": "2024-12-27T17:30:00Z",
+            "user": 12
+        }
+    },
+    {
+        "model": "train_station.trip",
+        "pk": 11,
+        "fields": {
+            "route": 11,
+            "train": 11,
+            "departure_time": "2024-12-28T09:00:00Z",
+            "arrival_time": "2024-12-28T11:00:00Z"
+        }
+    },
+    {
+        "model": "train_station.trip",
+        "pk": 12,
+        "fields": {
+            "route": 12,
+            "train": 12,
+            "departure_time": "2024-12-29T14:00:00Z",
+            "arrival_time": "2024-12-29T16:00:00Z"
+        }
+    },
+    {
+        "model": "train_station.ticket",
+        "pk": 10,
+        "fields": {
+            "cargo": 2,
+            "seat": 15,
+            "trip": 11,
+            "order": 9
+        }
+    },
+    {
+        "model": "train_station.ticket",
+        "pk": 11,
+        "fields": {
+            "cargo": 3,
+            "seat": 20,
+            "trip": 12,
+            "order": 10
+        }
+    },
+    {
+        "model": "train_station.crew",
+        "pk": 11,
+        "fields": {
+            "first_name": "Oksana",
+            "last_name": "Tymchuk"
+        }
+    },
+    {
+        "model": "train_station.crew",
+        "pk": 12,
+        "fields": {
+            "first_name": "Volodymyr",
+            "last_name": "Rybalka"
+        }
+    }
+
+]
